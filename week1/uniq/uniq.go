@@ -4,10 +4,18 @@ import (
   "os"
   "fmt"
   "bufio"
+  "io"
 )
 
 func main() {
-  scanner := bufio.NewScanner(os.Stdin)
+  err := uniq(os.Stdin, os.Stdout)
+  if err != nil {
+    panic(err.Error())
+  }
+}
+
+func uniq(in io.Reader, out io.Writer) error {
+  scanner := bufio.NewScanner(in)
   var prev_str string
 
   for scanner.Scan() {
@@ -18,11 +26,13 @@ func main() {
     }
 
     if text < prev_str {
-      panic("input is not sorted!")
+      return fmt.Errorf("input is not sorted!")
     }
 
     prev_str = text
 
-    fmt.Println(text)
+    fmt.Fprintln(out, text)
   }
+
+  return nil
 }
